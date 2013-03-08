@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'views.main', name='main'),
     url(r'^players/', 'rostermaker.views.players', name="players_list"),
+    url(r'^current/', 'gamemaker.views.current',),
 )

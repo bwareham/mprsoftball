@@ -11,6 +11,7 @@ class Item(models.Model):
     title = models.CharField(max_length = 50, blank = True)
     content = models.TextField()
     position = models.PositiveSmallIntegerField("Position")
+    published = models.BooleanField(default = False)
     class Meta:
         ordering = ['position']
         

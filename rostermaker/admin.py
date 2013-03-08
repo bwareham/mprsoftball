@@ -141,7 +141,7 @@ class SeasonAdmin(admin.ModelAdmin):
     
 class ItemAdmin(admin.TabularInline):
     model = Item
-    fields = ("title","content","position",)
+    fields = ("title","content","published","position",)
     # define the sortable
     sortable_field_name = "position"
     
