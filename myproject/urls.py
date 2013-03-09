@@ -24,4 +24,7 @@ urlpatterns = patterns('',
     url(r'^$', 'views.main', name='main'),
     url(r'^players/', 'rostermaker.views.players', name="players_list"),
     url(r'^current/', 'gamemaker.views.current',),
+    url(r'^season/', 'season.views.prior'),
+    url(r'^hall/', 'halloffame.views.hall_main'),
+    url(r'^photos/', 'photo.views.gallery_main'),
 )
