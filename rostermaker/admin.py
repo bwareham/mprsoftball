@@ -95,7 +95,7 @@ class GameRosterAdmin(admin.ModelAdmin):
         
     
 class SeasonAdmin(admin.ModelAdmin):
-    filter_horizontal = ('roster', 'captains', 'rookies', 'mvp', 'battingchamps', 'goldengloves','whippet','bombat',)
+    filter_horizontal = ('roster', 'captains', 'rookies', 'mvp', 'battingchamps', 'goldengloves', 'mostimproved','whippet','bombat',)
     fieldsets = (
         ('Season/Record', {
             'fields': (('year', 'wins', 'losses', 'ties'),)
@@ -128,6 +128,10 @@ class SeasonAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
             'fields': ('goldengloves',),
         }),
+        ('Most Improved',  {
+            'classes': ('collapse',),
+            'fields': ('mostimproved',),
+        }),
         ('Whippet(s) of the Year',  {
             'classes': ('collapse',),
             'fields': ('whippet',),
@@ -137,7 +141,11 @@ class SeasonAdmin(admin.ModelAdmin):
             'fields': ('bombat',),
         }),
     )
-        
+    class Media:
+        js = [
+			'/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js',
+			'/static/grappelli/tinymce_setup/tinymce_setup.js',
+		]    
     
 class ItemAdmin(admin.TabularInline):
     model = Item

@@ -13,6 +13,7 @@ class Season(models.Model):
     mvp = models.ManyToManyField(Player, blank = True, verbose_name = "Most Valuable Player(s)", related_name = 'mvp')
     battingchamps = models.ManyToManyField(Player, blank = True, verbose_name = "Batting Champs", related_name = 'battingchamps')
     goldengloves = models.ManyToManyField(Player, blank = True, verbose_name = "Golden Glove(s)", related_name = 'goldengloves')
+    mostimproved = models.ManyToManyField(Player, blank = True, verbose_name = "Most Improved", related_name = 'mostimproved')
     whippet = models.ManyToManyField(Player, blank = True, verbose_name = "Whippet(s) of the Year", related_name = 'whippet')
     bombat = models.ManyToManyField(Player, blank = True, verbose_name = "Bombat Winner", related_name = 'bombat')
     

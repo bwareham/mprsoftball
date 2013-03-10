@@ -27,4 +27,5 @@ urlpatterns = patterns('',
     url(r'^season/', 'season.views.prior'),
     url(r'^hall/', 'halloffame.views.hall_main'),
     url(r'^photos/', 'photo.views.gallery_main'),
+    url(r'^season_detail/(?P<season>\d{4})/$', 'season.views.season_detail'),
 )
