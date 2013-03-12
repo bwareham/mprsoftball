@@ -6,28 +6,6 @@ from section.models import Page, Item
 from photo.models import Photo
 #from halloffame.models import HOF
 
-'''
-class HallAdmin(admin.ModelAdmin):
-    model = HOF
-    verbose_name = "Hall of Fame"
-    verbose_name_plural = "Hall of Fame"
-    list_display = ('player','wing','yearEntered')
-    search_fields = ('player',)
-    list_filter = ('wing','yearEntered',)
-    fieldsets = (
-        (None, {
-            'fields': (('player', 'wing', 'yearEntered'),)
-        }),
-        ('Inscription', {
-            'fields': ('inscription', )
-        }),
-    )
-    class Media:
-        js = [
-			'/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js',
-			'/static/grappelli/tinymce_setup/tinymce_setup.js',
-		]    
-'''
 
 class HOFInline(admin.TabularInline):
     model = HOF
@@ -86,8 +64,11 @@ class GameRosterAdmin(admin.ModelAdmin):
         count = obj.players.count()
         women = obj.players.filter(sex='F')
         women_count = women.count()
-        women_pct = int((women_count/float(count))*100)
-        self.message_user(request,"Players scheduled: %s | Women: %s percent" % (count, women_pct))
+        if count != 0:
+            women_pct = int((women_count/float(count))*100)
+            self.message_user(request,"Players scheduled: %s | Women: %s percent" % (count, women_pct))
+        else:
+            self.message_user(request,"Players scheduled: 0 | Women: 0 percent")
         
     inlines = [
         StatInline,

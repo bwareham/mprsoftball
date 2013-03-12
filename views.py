@@ -26,9 +26,10 @@ def main(request):
     fcst3 = fcst[3].text
     
 	#Get game info
-    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
+    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('DateTime')
+    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')    
     home_pk = Page.objects.get(header='Home').pk
-    content_list = Item.objects.filter(page = home_pk).order_by('position')
+    content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     t = loader.get_template('main.html')
     c = Context({
         'current_temp': current_temp,
@@ -40,6 +41,7 @@ def main(request):
         'fcst2': fcst2,
         'fcst3': fcst3,
         'latest_games_list': latest_games_list,
+        'played_games_list': played_games_list,
         'content_list': content_list,
     })
     return HttpResponse(t.render(c))
