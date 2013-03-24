@@ -19,9 +19,8 @@ def current(request):
     })
     return HttpResponse(t.render(c))
 
-
-def stats(request):
-    #get this year's stats, create sums for each player and make dictionary
+def totals():
+#get this year's stats, create sums for each player and make dictionary
     current_stats = Stat.objects.filter(game__DateTime__year=timezone.now().year)
     stats_dict = current_stats.values('player')
     totals = stats_dict.annotate(
@@ -36,31 +35,23 @@ def stats(request):
 		runs=Sum('R'),
 		rbi=Sum('RBI'),
 		)
-		
-	#add batting average and player name to dictionary
+    
     for item in totals:
-	    if item['sing']:
-	        a = item['sing']
-	    else:
-	        a=0
-	    if item['doub']:
-	        b=item['doub']
-	    else:
-	        b=0
-	    if item['trip']:
-	        c=item['trip']
-	    else:
-	        c=0
-	    if item['hr']:
-	        d=item['hr']
-	    else:
-	        d=0
-	    hits = a + b + c + d
-	    avg = hits/float(item['ab'])
-	    item['avg']=avg
-	    key = item['player']
-	    name = Player.objects.get(pk=key)
-	    item['name']=name
+        pkey = item['player']
+        name = Player.objects.get(pk=pkey)
+        item['name']=name
+        for key in item.iterkeys():
+	        if item[key]:
+	            item[key] = item[key]
+	        else:
+	            item[key]=0
+        hits = item['sing'] + item['doub'] + item['trip'] + item ['hr']
+        avg = hits/float(item['ab'])
+        item['avg']=avg
+    return totals	
+
+
+def stats(request):
     t = loader.get_template('gamemaker/stats.html')
     c = Context({
         'totals': totals,
