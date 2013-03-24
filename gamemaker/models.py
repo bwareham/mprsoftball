@@ -45,7 +45,7 @@ class GameRosterForm(ModelForm):
         
 class Stat(models.Model):
     game = models.ForeignKey(Game, related_name = 'stat_game')
-    player = models.ForeignKey(Player, limit_choices_to={'active': True})
+    player = models.ForeignKey(Player, related_name = 'stat_player', limit_choices_to={'active': True})
     AB = models.PositiveSmallIntegerField()
     single = models.PositiveSmallIntegerField(null=True, blank=True)
     double = models.PositiveSmallIntegerField(null=True, blank=True)
