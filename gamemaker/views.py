@@ -6,18 +6,6 @@ from django.utils import timezone
 from rostermaker.models import Player
 from django.db.models import Sum
 
-def current(request):
-    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
-    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
-    home_pk = Page.objects.get(header='This Season').pk
-    content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
-    t = loader.get_template('gamemaker/current.html')
-    c = Context({
-        'latest_games_list': latest_games_list,
-        'played_games_list': played_games_list,
-        'content_list': content_list,
-    })
-    return HttpResponse(t.render(c))
 
 def totals():
 #get this year's stats, create sums for each player and make dictionary
@@ -50,9 +38,30 @@ def totals():
         item['avg']=avg
     return totals	
 
+def current(request):
+    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
+    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
+    home_pk = Page.objects.get(header='This Season').pk
+    content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
+    t = loader.get_template('gamemaker/current.html')
+    c = Context({
+        'latest_games_list': latest_games_list,
+        'played_games_list': played_games_list,
+        'content_list': content_list,
+        'totals': totals
+    })
+    return HttpResponse(t.render(c))
 
 def stats(request):
     t = loader.get_template('gamemaker/stats.html')
+    c = Context({
+        'totals': totals,
+    })
+    return HttpResponse(t.render(c))
+    
+def leaders(request):
+    avg_leaders = totals
+    t = loader.get_template('gamemaker/leaders.html')
     c = Context({
         'totals': totals,
     })
