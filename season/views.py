@@ -8,7 +8,7 @@ def prior(request):
     #latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
     seasons = Season.objects.all().order_by('year')
     count = len(seasons)
-    column_counts = count/3
+    column_counts = count/4
     home_pk = Page.objects.get(header='Prior Seasons').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     t = loader.get_template('season/prior.html')

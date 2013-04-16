@@ -28,6 +28,7 @@ class HOF(models.Model):
 		('MN', 'Main Hall'),
 		('SP', 'Satchel Paige Wing'),
 		('WP', 'Wally Pipp Ward'),
+		('TW', 'Ted Williams Suite'),
 	)
     player =  models.ForeignKey(Player, related_name = 'Hall of Fame')
     wing =  models.CharField(choices = WING_CHOICES, max_length = 2, verbose_name = "Wings and Wards", null=True, blank=True)

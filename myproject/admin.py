@@ -5,7 +5,6 @@ from seasons.models import Season
 from section.models import Page, Item
 from photo.models import Photo
 
-'''
 class HOFInline(admin.TabularInline):
     model = HOF
     verbose_name = "Hall of Fame"
@@ -21,7 +20,6 @@ class HOFInline(admin.TabularInline):
 			'/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js',
 			'/static/grappelli/tinymce_setup/tinymce_setup.js',
 		]
-'''
 class PlayerAdmin(admin.ModelAdmin):
     form = PlayerForm
     list_display = ('lastName', 'firstName', 'active', )    
@@ -32,8 +30,7 @@ class PlayerAdmin(admin.ModelAdmin):
     inlines = [
         HOFInline,
     ]
-        
-'''
+    
 class StatInline(admin.TabularInline):
     model = Stat
     fieldsets = (
@@ -146,9 +143,9 @@ class PhotoAdmin(admin.ModelAdmin):
         }),
     )    
     
-'''
+
 admin.site.register(Player, PlayerAdmin)
-#admin.site.register(Game, GameRosterAdmin)
-#admin.site.register(Season, SeasonAdmin)
-#admin.site.register(Page, PageAdmin)
-#admin.site.register(Photo, PhotoAdmin)
+admin.site.register(Game, GameRosterAdmin)
+admin.site.register(Season, SeasonAdmin)
+admin.site.register(Page, PageAdmin)
+admin.site.register(Photo, PhotoAdmin)

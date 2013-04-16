@@ -13,7 +13,6 @@ def main(request):
     latest_wx = ET.fromstring(xml)
     temps = latest_wx.findall(".//temperature[@type='apparent']/value")
     current_temp = temps[0].text
-    conditions = latest_wx.findall(".//temperature[@type='apparent']/value")
     conditions = latest_wx.findall(".//data[@type='current observations']/parameters/weather/weather-conditions")[0].attrib
     sky = conditions.get('weather-summary')
     period = latest_wx.findall(".//time-layout[@summarization='12hourly']/start-valid-time[@period-name]")
