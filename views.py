@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 def main(request):
     #Get latest wx info from NWS
-    response = urllib2.urlopen('http://forecast.weather.gov/MapClick.php?lat=44.94439&lon=-93.00407409667969&unit=0&lg=english&FcstType=dwml')
+    response = urllib2.urlopen('http://forecast.weather.gov/MapClick.php?lat=44.97257&lon=-93.10827255249023&unit=0&lg=english&FcstType=dwml')
     xml = response.read()
     latest_wx = ET.fromstring(xml)
     temps = latest_wx.findall(".//temperature[@type='apparent']/value")
@@ -45,6 +45,14 @@ def main(request):
     })
     return HttpResponse(t.render(c))
 
+
+def directions(request):
+    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
+    t = loader.get_template('directions.html')
+    c = Context({
+        'latest_games_list': latest_games_list,
+    })
+    return HttpResponse(t.render(c))
 
 def index(request):
     return HttpResponse("This works")

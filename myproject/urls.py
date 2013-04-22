@@ -30,4 +30,5 @@ urlpatterns = patterns('',
     url(r'^season_detail/(?P<season>\d{4})/$', 'season.views.season_detail'),
     url(r'^stats/','gamemaker.views.stats',),
     url(r'^current/','gamemaker.views.leaders',),
+    url(r'^directions', 'views.directions', name='directions'),
 )

@@ -66,3 +66,7 @@ def leaders(request):
         'totals': totals,
     })
     return HttpResponse(t.render(c))
+    
+
+
+
