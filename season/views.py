@@ -22,11 +22,13 @@ def prior(request):
 
 #Season detail pages:
 def season_detail(request, season):
+    current_year = timezone.now().year
     season = Season.objects.get(year=season)
     roster = season.roster
     t = loader.get_template('season/season_detail.html')
     c = Context({
-        'season': season,
+        'current_year': current_year,
+		'season': season,
         'roster': roster,
     })
     return HttpResponse(t.render(c))

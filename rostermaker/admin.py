@@ -11,6 +11,7 @@ class HOFInline(admin.TabularInline):
     model = HOF
     verbose_name = "Hall of Fame"
     verbose_name_plural = "Hall of Fame"
+    can_delete = True
     fieldsets = (
         (None, {
             'fields': ('wing', 'yearEntered', 'inscription',)

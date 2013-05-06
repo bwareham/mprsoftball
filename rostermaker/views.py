@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from rostermaker.models import Player
+from rostermaker.models import Player, HOF
 from django.http import HttpResponse
 
 
@@ -14,3 +14,16 @@ def players(request):
         'column_counts': column_counts,
     })
     return HttpResponse(t.render(c))
+    
+def player_detail(request, player_id):
+    player = Player.objects.get(pk=player_id)
+    seasons = player.roster.all().order_by('year')
+    hof = HOF.objects.filter(player=player_id).order_by('yearEntered')
+    t = loader.get_template('rostermaker/player_detail.html')
+    c = Context({
+        'player': player,
+        'seasons': seasons,
+        'hof': hof,
+    })
+    return HttpResponse(t.render(c))
+    
