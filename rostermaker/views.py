@@ -1,5 +1,6 @@
 from django.template import Context, loader
 from rostermaker.models import Player, HOF
+from section.models import Page, Item
 from season.models import Season
 from django.http import HttpResponse
 
@@ -44,3 +45,19 @@ def player_detail(request, player_id):
     })
     return HttpResponse(t.render(c))
     
+def hall_main(request):
+    pipp = HOF.objects.filter(wing='WP').order_by('yearEntered','player')
+    paige = HOF.objects.filter(wing='SP').order_by('yearEntered','player')
+    main = HOF.objects.filter(wing='MN').order_by('yearEntered','player')
+    ted = HOF.objects.filter(wing='TW').order_by('yearEntered','player')
+    home_pk = Page.objects.get(header='Hall of Fame').pk
+    content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
+    t = loader.get_template('rostermaker/hall_main.html')
+    c = Context({
+        'pipp': pipp,
+        'paige': paige,
+        'main': main,
+        'ted': ted,
+        'content_list': content_list,
+    })
+    return HttpResponse(t.render(c))
