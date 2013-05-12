@@ -1,10 +1,11 @@
 from django.template import Context, loader
 from gamemaker.models import Game, Stat
 from section.models import Page, Item
+from season.models import Season
 from django.http import HttpResponse
 from django.utils import timezone
 from rostermaker.models import Player
-from django.db.models import Sum
+from django.db.models import Sum, F
 
 
 def totals():
@@ -43,12 +44,24 @@ def current(request):
     played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
     home_pk = Page.objects.get(header='This Season').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
+    wins = played_games_list.filter(scoreMPR__gt=F('scoreOPP')).count()
+    losses = played_games_list.filter(scoreOPP__gt=F('scoreMPR')).count()
+    ties = wins = played_games_list.filter(scoreMPR__exact=F('scoreOPP')).count()
+    pastWins = Season.objects.aggregate(Sum('wins'))
+    pastLosses = Season.objects.aggregate(Sum('losses'))
+    pastTies = Season.objects.aggregate(Sum('ties'))
     t = loader.get_template('gamemaker/current.html')
     c = Context({
         'latest_games_list': latest_games_list,
         'played_games_list': played_games_list,
         'content_list': content_list,
-        'totals': totals
+        'totals': totals,
+        'wins': wins,
+        'losses': losses,
+        'ties': ties,
+        'pastWins': pastWins,
+        'pastLosses': pastLosses,
+        'pastTies': pastTies,
     })
     return HttpResponse(t.render(c))
 

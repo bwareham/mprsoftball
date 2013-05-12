@@ -15,43 +15,48 @@ def main(request):
     current_temp = temps[0].text
     conditions = latest_wx.findall(".//data[@type='current observations']/parameters/weather/weather-conditions")[0].attrib
     sky = conditions.get('weather-summary')
-    wind_speed = latest_wx.findall(".//wind-speed[@type='sustained']/value")[0].text
-    wind_mph = int(float(wind_speed) * 1.15077945)
-    dir_deg = int(latest_wx.findall(".//direction[@type='wind']/value")[0].text)
-    if 101.25 <= dir_deg <  123.75: 
-        dir = "ESE"
-    elif 11.25 <= dir_deg <  33.75: 
-        dir = "NNE"
-    elif 123.75 <= dir_deg <  146.25: 
-        dir = "SE"
-    elif 146.25 <= dir_deg <  168.75: 
-        dir = "SSE"
-    elif 168.75 <= dir_deg <  191.25: 
-        dir = "S"
-    elif 191.25 <= dir_deg <  213.75: 
-        dir = "SSW"
-    elif 213.75 <= dir_deg <  236.25: 
-        dir = "SW"
-    elif 236.25 <= dir_deg <  258.75: 
-        dir = "WSW"
-    elif 258.75 <= dir_deg <  281.25: 
-        dir = "W"
-    elif 281.25 <= dir_deg <  303.75: 
-        dir = "WNW"
-    elif 303.75 <= dir_deg <  326.25: 
-        dir = "NW"
-    elif 326.25 <= dir_deg <  348.75: 
-        dir = "NNW"
-    elif 33.75 <= dir_deg <  56.25: 
-        dir = "NE"
-    elif 348.75 <= dir_deg <  360.25: 
-        dir = "N"
-    elif 0 <= dir_deg <  11.25: 
-        dir = "N"
-    elif 56.25 <= dir_deg <  78.75: 
-        dir = "ENE"
-    elif 78.75 <= dir_deg <  101.25: 
-        dir = "E"
+    try:
+        wind_speed = latest_wx.findall(".//wind-speed[@type='sustained']/value")[0].text
+        wind_mph = int(float(wind_speed) * 1.15077945)
+        dir_deg = int(latest_wx.findall(".//direction[@type='wind']/value")[0].text)
+        if 101.25 <= dir_deg <  123.75: 
+            dir = "ESE"
+        elif 11.25 <= dir_deg <  33.75: 
+            dir = "NNE"
+        elif 123.75 <= dir_deg <  146.25: 
+             dir = "SE"
+        elif 146.25 <= dir_deg <  168.75: 
+            dir = "SSE"
+        elif 168.75 <= dir_deg <  191.25: 
+            dir = "S"
+        elif 191.25 <= dir_deg <  213.75: 
+            dir = "SSW"
+        elif 213.75 <= dir_deg <  236.25: 
+            dir = "SW"
+        elif 236.25 <= dir_deg <  258.75: 
+            dir = "WSW"
+        elif 258.75 <= dir_deg <  281.25: 
+            dir = "W"
+        elif 281.25 <= dir_deg <  303.75: 
+            dir = "WNW"
+        elif 303.75 <= dir_deg <  326.25: 
+            dir = "NW"
+        elif 326.25 <= dir_deg <  348.75: 
+            dir = "NNW"
+        elif 33.75 <= dir_deg <  56.25: 
+            dir = "NE"
+        elif 348.75 <= dir_deg <  360.25: 
+            dir = "N"
+        elif 0 <= dir_deg <  11.25: 
+            dir = "N"
+        elif 56.25 <= dir_deg <  78.75: 
+            dir = "ENE"
+        elif 78.75 <= dir_deg <  101.25: 
+            dir = "E"
+        else: dir = ""
+    except:
+        wind_mph = "N/A"
+        dir = ""
     period = latest_wx.findall(".//time-layout[@summarization='12hourly']/start-valid-time[@period-name]")
     period1 = period[0].get('period-name')
     period2 = period[1].get('period-name')
