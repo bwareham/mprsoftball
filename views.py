@@ -1,6 +1,7 @@
 from django.template import Context, loader
 from gamemaker.models import Game
 from section.models import Page, Item
+from photo.models import Photo
 from django.http import HttpResponse
 from django.utils import timezone
 import urllib2
@@ -67,10 +68,11 @@ def main(request):
     fcst3 = fcst[3].text
     
 	#Get game info
-    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('DateTime')
+    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
     latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')    
     home_pk = Page.objects.get(header='Home').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
+    photos = Photo.objects.all()
     t = loader.get_template('main.html')
     c = Context({
         'current_temp': current_temp,
@@ -86,6 +88,7 @@ def main(request):
         'latest_games_list': latest_games_list,
         'played_games_list': played_games_list,
         'content_list': content_list,
+        'photos': photos,
     })
     return HttpResponse(t.render(c))
 

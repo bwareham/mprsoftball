@@ -1,5 +1,6 @@
 from django.template import Context, loader
 from rostermaker.models import Player, HOF
+from photo.models import Photo
 from section.models import Page, Item
 from season.models import Season
 from django.http import HttpResponse
@@ -29,6 +30,7 @@ def player_detail(request, player_id):
     mostimproved = Season.objects.all().filter(mostimproved=player_id).order_by('year')
     whippet = Season.objects.all().filter(whippet=player_id).order_by('year')
     bombat = Season.objects.all().filter(bombat=player_id).order_by('year')
+    photos = Photo.objects.filter(player_tag=player)
     t = loader.get_template('rostermaker/player_detail.html')
     c = Context({
         'player': player,
@@ -42,6 +44,7 @@ def player_detail(request, player_id):
         'mostimproved': mostimproved,
         'whippet': whippet,
         'bombat': bombat,
+        'photos': photos,
     })
     return HttpResponse(t.render(c))
     

@@ -2,6 +2,7 @@ from django.template import Context, loader
 from season.models import Season
 from gamemaker.models import Game
 from section.models import Page, Item
+from photo.models import Photo
 from django.http import HttpResponse
 from django.utils import timezone
 from django.db.models import Sum, F
@@ -38,13 +39,15 @@ def prior(request):
 #Season detail pages:
 def season_detail(request, season):
     current_year = timezone.now().year
-    season = Season.objects.get(year=season)
-    roster = season.roster
+    season_prior = Season.objects.get(year=season)
+    roster = season_prior.roster
+    photos = Photo.objects.filter(year=season)
     t = loader.get_template('season/season_detail.html')
     c = Context({
         'current_year': current_year,
-		'season': season,
+		'season_prior': season_prior,
         'roster': roster,
+        'photos': photos,
     })
     return HttpResponse(t.render(c))
 

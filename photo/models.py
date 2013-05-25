@@ -8,3 +8,6 @@ class Photo(models.Model):
     caption = models.TextField(null=True, blank=True, help_text="Optional: Longer description of what's happening in the photo")
     player_tag = models.ManyToManyField(Player, null=True, blank=True, help_text="Optional: Identify players in photo" )
     year = models.PositiveSmallIntegerField(null=True, blank=True, help_text="Optional: Season photo was taken")
+    
+    def __unicode__(self):
+        return self.description

@@ -77,7 +77,7 @@ class GameRosterAdmin(admin.ModelAdmin):
         
     
 class SeasonAdmin(admin.ModelAdmin):
-    filter_horizontal = ('roster', 'captains', 'rookies', 'mvp', 'battingchamps', 'goldengloves', 'mostimproved','whippet','bombat',)
+    filter_horizontal = ('roster', 'captains', 'rookies', 'mvp', 'battingchamps', 'goldengloves', 'mostimproved','whippet','bombat','walker',)
     fieldsets = (
         ('Season/Record', {
             'fields': (('year', 'wins', 'losses', 'ties'),)
@@ -121,6 +121,10 @@ class SeasonAdmin(admin.ModelAdmin):
         ('Bombat',  {
             'classes': ('collapse',),
             'fields': ('bombat',),
+        }),
+        ('Walker Award',  {
+            'classes': ('collapse',),
+            'fields': ('walker',),
         }),
     )
     class Media:

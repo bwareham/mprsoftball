@@ -16,6 +16,8 @@ class Season(models.Model):
     mostimproved = models.ManyToManyField(Player, blank = True, verbose_name = "Most Improved", related_name = 'mostimproved')
     whippet = models.ManyToManyField(Player, blank = True, verbose_name = "Whippet(s) of the Year", related_name = 'whippet')
     bombat = models.ManyToManyField(Player, blank = True, verbose_name = "Bombat Winner", related_name = 'bombat')
+    walker = models.ManyToManyField(Player, blank = True, verbose_name = "Walker Award", related_name = 'walker')
+    
     
     def __unicode__(self):
         return str(self.year)

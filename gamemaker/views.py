@@ -46,7 +46,7 @@ def current(request):
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     wins = played_games_list.filter(scoreMPR__gt=F('scoreOPP')).count()
     losses = played_games_list.filter(scoreOPP__gt=F('scoreMPR')).count()
-    ties = wins = played_games_list.filter(scoreMPR__exact=F('scoreOPP')).count()
+    ties = played_games_list.filter(scoreMPR__exact=F('scoreOPP')).count()
     pastWins = Season.objects.aggregate(Sum('wins'))
     pastLosses = Season.objects.aggregate(Sum('losses'))
     pastTies = Season.objects.aggregate(Sum('ties'))
