@@ -1,18 +1,14 @@
 from django.template import Context, loader
-from season.models import Season, season_choice, Quicklink, player_choice
+from season.models import Season, season_choice, player_choice
 from gamemaker.models import Game
 from section.models import Page, Item
 from photo.models import Photo
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from django.db.models import Sum, F
-from django.shortcuts import render, render_to_response
-
-
 
 
 def prior(request):
-    #latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
     seasons = Season.objects.all().order_by('year')
     random_seasons = Season.objects.all().order_by('?')
     count = len(seasons)
@@ -42,8 +38,7 @@ def prior(request):
         'pastTies': pastTies,
         'random_seasons': random_seasons,
         'season_choice': season_choice,
-        'player_choice': player_choice,
-		'Quicklink': Quicklink,		
+        'player_choice': player_choice,	
     })
     return HttpResponse(t.render(c))
 
@@ -67,13 +62,11 @@ def season_quicklink(request):
     if request.method == "GET":
 	    form = season_choice(request.GET)
 	    if form.is_valid():
-	        season = form.cleaned_data['choice']
+	        season = form.cleaned_data['choice'].year
 	        redirect = '/season_detail/' + str(season)
 	        
 	    return HttpResponseRedirect(redirect)
-    else:
-        form = season_choice()
-    return render(request, 'season/prior.html', {})
+
 
 def player_quicklink(request):
     if request.method == "GET":
@@ -83,6 +76,4 @@ def player_quicklink(request):
 	        redirect = '/player_detail/' + str(player)
 	        
 	    return HttpResponseRedirect(redirect)
-    else:
-        form = season_choice()
-    return render(request, 'season/prior.html', {})
+
