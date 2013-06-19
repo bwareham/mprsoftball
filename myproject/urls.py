@@ -33,4 +33,6 @@ urlpatterns = patterns('',
     url(r'^directions', 'views.directions', name='directions'),
     url(r'^player_detail/(?P<player_id>\d+)/$', 'rostermaker.views.player_detail'),
     url(r'^random_pics','photo.views.random_pics'),
+    url(r'^season_quicklink','season.views.season_quicklink'),
+    url(r'^player_quicklink','season.views.player_quicklink'),
 )

@@ -1,8 +1,9 @@
 from django.db import models
 from rostermaker.models import Player
+from django import forms
 
 class Season(models.Model):
-    year = models.IntegerField(unique = True, verbose_name = "Season (year)")
+    year = models.IntegerField(unique = True, max_length=4, verbose_name = "Season (year)")
     wins = models.IntegerField(blank = True)
     losses = models.IntegerField(blank = True)
     ties = models.IntegerField(blank = True, null = True)
@@ -22,3 +23,13 @@ class Season(models.Model):
     def __unicode__(self):
         return str(self.year)
         
+class season_choice(forms.Form):
+    choice = forms.ModelChoiceField(queryset=Season.objects.all().order_by('year'), empty_label='Go to season page', to_field_name='year', label='', widget=forms.Select(attrs={"onChange":'this.form.submit();'}))
+
+class player_choice(forms.Form):
+    choice = forms.ModelChoiceField(queryset=Player.objects.all().order_by('lastName', 'firstName'), empty_label='Go to player page', to_field_name='pk', label='', widget=forms.Select(attrs={"onChange":'this.form.submit();'}))
+    
+    
+class Quicklink(forms.Form):
+    season_link = forms.ModelChoiceField(queryset=Season.objects.all().order_by('year'), empty_label='Choose season', to_field_name='year', label='Quicklink to season page:', widget=forms.Select(attrs={"onChange":'this.form.submit();'}))
+    player_link = forms.ModelChoiceField(queryset=Player.objects.all().order_by('lastName','firstName'), empty_label='Choose player', to_field_name='pk', label='Quicklink to player page:', widget=forms.Select(attrs={"onChange":'this.form.submit();'}))

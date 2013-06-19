@@ -1,15 +1,20 @@
 from django.template import Context, loader
-from season.models import Season
+from season.models import Season, season_choice, Quicklink, player_choice
 from gamemaker.models import Game
 from section.models import Page, Item
 from photo.models import Photo
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from django.db.models import Sum, F
+from django.shortcuts import render, render_to_response
+
+
+
 
 def prior(request):
     #latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
     seasons = Season.objects.all().order_by('year')
+    random_seasons = Season.objects.all().order_by('?')
     count = len(seasons)
     column_counts = count/4
     home_pk = Page.objects.get(header='Prior Seasons').pk
@@ -21,6 +26,8 @@ def prior(request):
     pastWins = Season.objects.aggregate(Sum('wins'))
     pastLosses = Season.objects.aggregate(Sum('losses'))
     pastTies = Season.objects.aggregate(Sum('ties'))
+    
+        
     t = loader.get_template('season/prior.html')
     c = Context({
         'seasons': seasons,
@@ -33,6 +40,10 @@ def prior(request):
         'pastWins': pastWins,
         'pastLosses': pastLosses,
         'pastTies': pastTies,
+        'random_seasons': random_seasons,
+        'season_choice': season_choice,
+        'player_choice': player_choice,
+		'Quicklink': Quicklink,		
     })
     return HttpResponse(t.render(c))
 
@@ -44,10 +55,34 @@ def season_detail(request, season):
     photos = Photo.objects.filter(year=season)
     t = loader.get_template('season/season_detail.html')
     c = Context({
-        'current_year': current_year,
-		'season_prior': season_prior,
-        'roster': roster,
-        'photos': photos,
+	    'current_year': current_year,
+	    'season_prior': season_prior,
+	    'roster': roster,
+	    'photos': photos,
     })
     return HttpResponse(t.render(c))
 
+
+def season_quicklink(request):
+    if request.method == "GET":
+	    form = season_choice(request.GET)
+	    if form.is_valid():
+	        season = form.cleaned_data['choice']
+	        redirect = '/season_detail/' + str(season)
+	        
+	    return HttpResponseRedirect(redirect)
+    else:
+        form = season_choice()
+    return render(request, 'season/prior.html', {})
+
+def player_quicklink(request):
+    if request.method == "GET":
+	    form = player_choice(request.GET)
+	    if form.is_valid():
+	        player = form.cleaned_data['choice'].pk
+	        redirect = '/player_detail/' + str(player)
+	        
+	    return HttpResponseRedirect(redirect)
+    else:
+        form = season_choice()
+    return render(request, 'season/prior.html', {})
