@@ -44,6 +44,7 @@ def prior(request):
 
 #Season detail pages:
 def season_detail(request, season):
+    seasons = Season.objects.all().order_by('year')
     current_year = timezone.now().year
     season_prior = Season.objects.get(year=season)
     roster = season_prior.roster
@@ -54,6 +55,7 @@ def season_detail(request, season):
 	    'season_prior': season_prior,
 	    'roster': roster,
 	    'photos': photos,
+	    'seasons': seasons,
     })
     return HttpResponse(t.render(c))
 
@@ -77,3 +79,15 @@ def player_quicklink(request):
 	        
 	    return HttpResponseRedirect(redirect)
 
+def priorlinks(request):
+    seasons = Season.objects.all().order_by('year')
+    count = len(seasons)
+    column_counts = count/4
+    t = loader.get_template('season/priorlinks.html')
+    c = Context({
+        'seasons': seasons,
+        'count': count,
+        'column_counts': column_counts,
+    })
+    return HttpResponse(t.render(c))
+ 

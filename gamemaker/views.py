@@ -37,6 +37,8 @@ def totals():
         hits = item['sing'] + item['doub'] + item['trip'] + item ['hr']
         avg = hits/float(item['ab'])
         item['avg']=avg
+        games = current_stats.filter(player=pkey).count()
+        item['games']=games
     return totals	
 
 def current(request):

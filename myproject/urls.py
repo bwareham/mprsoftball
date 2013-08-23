@@ -35,4 +35,5 @@ urlpatterns = patterns('',
     url(r'^random_pics','photo.views.random_pics'),
     url(r'^season_quicklink','season.views.season_quicklink'),
     url(r'^player_quicklink','season.views.player_quicklink'),
+    url(r'^priorlinks','season.views.priorlinks'),
 )
