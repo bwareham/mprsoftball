@@ -39,9 +39,10 @@ def totals():
         item['avg']=avg
         games = current_stats.filter(player=pkey).count()
         item['games']=games
-    return totals	
+    return totals
 
-def current(request):
+#context() used in current(request) in this view and prior(request) in season.view
+def context():
     latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
     played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
     home_pk = Page.objects.get(header='This Season').pk
@@ -52,8 +53,7 @@ def current(request):
     pastWins = Season.objects.aggregate(Sum('wins'))
     pastLosses = Season.objects.aggregate(Sum('losses'))
     pastTies = Season.objects.aggregate(Sum('ties'))
-    t = loader.get_template('gamemaker/current.html')
-    c = Context({
+    context = Context({
         'latest_games_list': latest_games_list,
         'played_games_list': played_games_list,
         'content_list': content_list,
@@ -65,6 +65,11 @@ def current(request):
         'pastLosses': pastLosses,
         'pastTies': pastTies,
     })
+    return context
+
+def current(request):
+    t = loader.get_template('gamemaker/current.html')
+    c = context()
     return HttpResponse(t.render(c))
 
 def stats(request):

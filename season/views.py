@@ -1,41 +1,38 @@
 from django.template import Context, loader
 from season.models import Season, season_choice, player_choice
-from gamemaker.models import Game
+from gamemaker.views import context
 from section.models import Page, Item
 from photo.models import Photo
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
-from django.db.models import Sum, F
 
-
-def prior(request):
+def season_params():
     seasons = Season.objects.all().order_by('year')
-    random_seasons = Season.objects.all().order_by('?')
     count = len(seasons)
+    first_season = seasons[0].year
+    last_season = seasons[count - 1].year
+    return (seasons, first_season, last_season, count)
+
+#view for the History page
+def prior(request):
+    random_seasons = season_params()[0].order_by('?')
+    count = season_params()[3]
     column_counts = count/4
     home_pk = Page.objects.get(header='Prior Seasons').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
-    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
-    wins = played_games_list.filter(scoreMPR__gt=F('scoreOPP')).count()
-    losses = played_games_list.filter(scoreOPP__gt=F('scoreMPR')).count()
-    ties = wins = played_games_list.filter(scoreMPR__exact=F('scoreOPP')).count()
-    pastWins = Season.objects.aggregate(Sum('wins'))
-    pastLosses = Season.objects.aggregate(Sum('losses'))
-    pastTies = Season.objects.aggregate(Sum('ties'))
-    
-        
+         
     t = loader.get_template('season/prior.html')
     c = Context({
-        'seasons': seasons,
-        'count': count,
+        'seasons': season_params()[0],
+        'count': season_params()[3],
         'column_counts': column_counts,
         'content_list': content_list,
-        'wins': wins,
-        'losses': losses,
-        'ties': ties,
-        'pastWins': pastWins,
-        'pastLosses': pastLosses,
-        'pastTies': pastTies,
+        'wins': context()['wins'],
+        'losses': context()['losses'],
+        'ties': context()['ties'],
+        'pastWins': context()['pastWins'],
+        'pastLosses': context()['pastLosses'],
+        'pastTies': context()['pastTies'],
         'random_seasons': random_seasons,
         'season_choice': season_choice,
         'player_choice': player_choice,	
@@ -44,7 +41,6 @@ def prior(request):
 
 #Season detail pages:
 def season_detail(request, season):
-    seasons = Season.objects.all().order_by('year')
     current_year = timezone.now().year
     season_prior = Season.objects.get(year=season)
     roster = season_prior.roster
@@ -55,7 +51,9 @@ def season_detail(request, season):
 	    'season_prior': season_prior,
 	    'roster': roster,
 	    'photos': photos,
-	    'seasons': seasons,
+	    'seasons': season_params()[0],
+	    'first_season': season_params()[1],
+	    'last_season': season_params()[2],
     })
     return HttpResponse(t.render(c))
 
@@ -80,12 +78,11 @@ def player_quicklink(request):
 	    return HttpResponseRedirect(redirect)
 
 def priorlinks(request):
-    seasons = Season.objects.all().order_by('year')
-    count = len(seasons)
+    count = season_params()[3]
     column_counts = count/4
     t = loader.get_template('season/priorlinks.html')
     c = Context({
-        'seasons': seasons,
+        'seasons': season_params()[0],
         'count': count,
         'column_counts': column_counts,
     })

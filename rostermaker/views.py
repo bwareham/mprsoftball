@@ -19,17 +19,18 @@ def players(request):
     return HttpResponse(t.render(c))
     
 def player_detail(request, player_id):
+    s = Season.objects.all()
     player = Player.objects.get(pk=player_id)
     seasons = player.roster.all().order_by('year')
     hof = HOF.objects.filter(player=player_id).order_by('yearEntered')
-    captain = Season.objects.all().filter(captains=player_id).order_by('year')
-    rookie = Season.objects.all().filter(rookies=player_id).order_by('year')
-    mvp = Season.objects.all().filter(mvp=player_id).order_by('year')
-    battingchamp = Season.objects.all().filter(battingchamps=player_id).order_by('year')
-    goldenglove = Season.objects.all().filter(goldengloves=player_id).order_by('year')
-    mostimproved = Season.objects.all().filter(mostimproved=player_id).order_by('year')
-    whippet = Season.objects.all().filter(whippet=player_id).order_by('year')
-    bombat = Season.objects.all().filter(bombat=player_id).order_by('year')
+    captain = s.filter(captains=player_id).order_by('year')
+    rookie = s.filter(rookies=player_id).order_by('year')
+    mvp = s.filter(mvp=player_id).order_by('year')
+    battingchamp = s.filter(battingchamps=player_id).order_by('year')
+    goldenglove = s.filter(goldengloves=player_id).order_by('year')
+    mostimproved = s.filter(mostimproved=player_id).order_by('year')
+    whippet = s.filter(whippet=player_id).order_by('year')
+    bombat = s.filter(bombat=player_id).order_by('year')
     photos = Photo.objects.filter(player_tag=player)
     t = loader.get_template('rostermaker/player_detail.html')
     c = Context({
@@ -49,10 +50,11 @@ def player_detail(request, player_id):
     return HttpResponse(t.render(c))
     
 def hall_main(request):
-    pipp = HOF.objects.filter(wing='WP').order_by('yearEntered','player')
-    paige = HOF.objects.filter(wing='SP').order_by('yearEntered','player')
-    main = HOF.objects.filter(wing='MN').order_by('yearEntered','player')
-    ted = HOF.objects.filter(wing='TW').order_by('yearEntered','player')
+    h = HOF.objects.filter
+    pipp = h(wing='WP').order_by('yearEntered','player')
+    paige = h(wing='SP').order_by('yearEntered','player')
+    main = h(wing='MN').order_by('yearEntered','player')
+    ted = h(wing='TW').order_by('yearEntered','player')
     home_pk = Page.objects.get(header='Hall of Fame').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     t = loader.get_template('rostermaker/hall_main.html')
