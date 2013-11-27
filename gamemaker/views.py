@@ -44,12 +44,13 @@ def totals():
 #context() used in current(request) in this view and prior(request) in season.view
 def context():
     latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
-    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
+    played_games_list = Game.objects.filter(DateTime__year=timezone.now().year, DateTime__lte=timezone.now()).order_by('-DateTime')
     home_pk = Page.objects.get(header='This Season').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     wins = played_games_list.filter(scoreMPR__gt=F('scoreOPP')).count()
     losses = played_games_list.filter(scoreOPP__gt=F('scoreMPR')).count()
     ties = played_games_list.filter(scoreMPR__exact=F('scoreOPP')).count()
+    current_season = Season.objects.filter(year=timezone.now().year) #for "if/else" condition when calculating franchise records in templates
     pastWins = Season.objects.aggregate(Sum('wins'))
     pastLosses = Season.objects.aggregate(Sum('losses'))
     pastTies = Season.objects.aggregate(Sum('ties'))
@@ -64,6 +65,7 @@ def context():
         'pastWins': pastWins,
         'pastLosses': pastLosses,
         'pastTies': pastTies,
+        'current_season': current_season,
     })
     return context
 

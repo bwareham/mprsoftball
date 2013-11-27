@@ -35,7 +35,8 @@ def prior(request):
         'pastTies': context()['pastTies'],
         'random_seasons': random_seasons,
         'season_choice': season_choice,
-        'player_choice': player_choice,	
+        'player_choice': player_choice,
+        'current_season': context()['current_season'],
     })
     return HttpResponse(t.render(c))
 
