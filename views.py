@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from gamemaker.models import Game
+from gamemaker.models import Game, PlayedGames, LatestGames
 from section.models import Page, Item
 from photo.models import Photo
 from django.http import HttpResponse
@@ -68,8 +68,10 @@ def main(request):
     fcst3 = fcst[3].text
     
 	#Get game info
-    played_games_list = Game.objects.filter(DateTime__lte=timezone.now()).order_by('-DateTime')
-    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')    
+    #played_games_list = Game.objects.filter(when__lte=timezone.now()).order_by('-when')
+    #latest_games_list = Game.objects.filter(when__gte=timezone.now()).order_by('when')    
+    latest_games_list = LatestGames()
+    played_games_list = PlayedGames()
     home_pk = Page.objects.get(header='Home').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     photos = Photo.objects.all()
@@ -94,7 +96,7 @@ def main(request):
 
 
 def directions(request):
-    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
+    latest_games_list = Game.objects.filter(when__gte=timezone.now()).order_by('when')
     t = loader.get_template('directions.html')
     c = Context({
         'latest_games_list': latest_games_list,

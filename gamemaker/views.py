@@ -1,5 +1,5 @@
 from django.template import Context, loader
-from gamemaker.models import Game, Stat
+from gamemaker.models import Game, Stat, PlayedGames, LatestGames
 from section.models import Page, Item
 from season.models import Season
 from django.http import HttpResponse
@@ -10,7 +10,7 @@ from django.db.models import Sum, F
 
 def totals():
 #get this year's stats, create sums for each player and make dictionary
-    current_stats = Stat.objects.filter(game__DateTime__year=timezone.now().year)
+    current_stats = Stat.objects.filter(g__when__year=timezone.now().year)
     stats_dict = current_stats.values('player')
     totals = stats_dict.annotate(
         ab=Sum('AB'),
@@ -43,8 +43,10 @@ def totals():
 
 #context() used in current(request) in this view and prior(request) in season.view
 def context():
-    latest_games_list = Game.objects.filter(DateTime__gte=timezone.now()).order_by('DateTime')
-    played_games_list = Game.objects.filter(DateTime__year=timezone.now().year, DateTime__lte=timezone.now()).order_by('-DateTime')
+    #latest_games_list = Game.objects.filter(when__gte=timezone.now()).order_by('when')
+    #played_games_list = Game.objects.filter(when__year=timezone.now().year, when__lte=timezone.now()).order_by('-when')
+    played_games_list = PlayedGames()
+    latest_games_list = LatestGames()
     home_pk = Page.objects.get(header='This Season').pk
     content_list = Item.objects.filter(page = home_pk, published = True).order_by('position')
     wins = played_games_list.filter(scoreMPR__gt=F('scoreOPP')).count()
