@@ -67,7 +67,7 @@ def main(request):
         period1  = "Forecast"
         period2  = " "
         period3  = " "
-        fcst1  = current_forecast
+        fcst1  = "n/a"
         fcst2  = "n/a"
         fcst3 = "n/a"
 
