@@ -3,87 +3,78 @@ from gamemaker.models import Game, PlayedGames, LatestGames
 from section.models import Page, Item
 from photo.models import Photo
 from django.http import HttpResponse
+from django.template.response import TemplateResponse
 from django.utils import timezone
-import urllib2
-import xml.etree.ElementTree as ET
+import forecastio
 
 def main(request):
-    #Get latest wx info from NWS
+    #Get latest wx info from forecast.io
+	api_key = "61953c86d345eb2b23b2a53d50edbf5c"
+	lat = 44.97257
+	lon = -93.10827255249023
 	try:
-		response = urllib2.urlopen('http://forecast.weather.gov/MapClick.php?lat=44.97257&lon=-93.10827255249023&unit=0&lg=english&FcstType=dwml')
-		xml = response.read()
-		latest_wx = ET.fromstring(xml)
-		temps = latest_wx.findall(".//temperature[@type='apparent']/value")
-		current_temp = temps[0].text
-		conditions = latest_wx.findall(".//data[@type='current observations']/parameters/weather/weather-conditions")[0].attrib
-		sky = conditions.get('weather-summary')
+		forecast = forecastio.load_forecast(api_key, lat, lon)
+		current_forecast = forecast.hourly().summary
+		skies = forecast.currently().summary
+		temp = forecast.currently().temperature
+
 		try:
-			wind_speed = latest_wx.findall(".//wind-speed[@type='sustained']/value")[0].text
-			wind_mph = int(float(wind_speed) * 1.15077945)
-			dir_deg = int(latest_wx.findall(".//direction[@type='wind']/value")[0].text)
-			if 101.25 <= dir_deg <  123.75: 
+			wind_speed = forecast.currently().windSpeed
+			wind_dir = forecast.currently().windBearing
+			if 101.25 <= wind_dir <  123.75: 
 				dir = "ESE"
-			elif 11.25 <= dir_deg <  33.75: 
+			elif 11.25 <= wind_dir <  33.75: 
 				dir = "NNE"
-			elif 123.75 <= dir_deg <  146.25: 
+			elif 123.75 <= wind_dir <  146.25: 
 				 dir = "SE"
-			elif 146.25 <= dir_deg <  168.75: 
+			elif 146.25 <= wind_dir <  168.75: 
 				dir = "SSE"
-			elif 168.75 <= dir_deg <  191.25: 
+			elif 168.75 <= wind_dir <  191.25: 
 				dir = "S"
-			elif 191.25 <= dir_deg <  213.75: 
+			elif 191.25 <= wind_dir <  213.75: 
 				dir = "SSW"
-			elif 213.75 <= dir_deg <  236.25: 
+			elif 213.75 <= wind_dir <  236.25: 
 				dir = "SW"
-			elif 236.25 <= dir_deg <  258.75: 
+			elif 236.25 <= wind_dir <  258.75: 
 				dir = "WSW"
-			elif 258.75 <= dir_deg <  281.25: 
+			elif 258.75 <= wind_dir <  281.25: 
 				dir = "W"
-			elif 281.25 <= dir_deg <  303.75: 
+			elif 281.25 <= wind_dir <  303.75: 
 				dir = "WNW"
-			elif 303.75 <= dir_deg <  326.25: 
+			elif 303.75 <= wind_dir <  326.25: 
 				dir = "NW"
-			elif 326.25 <= dir_deg <  348.75: 
+			elif 326.25 <= wind_dir <  348.75: 
 				dir = "NNW"
-			elif 33.75 <= dir_deg <  56.25: 
+			elif 33.75 <= wind_dir <  56.25: 
 				dir = "NE"
-			elif 348.75 <= dir_deg <  360.25: 
+			elif 348.75 <= wind_dir <  360.25: 
 				dir = "N"
-			elif 0 <= dir_deg <  11.25: 
+			elif 0 <= wind_dir <  11.25: 
 				dir = "N"
-			elif 56.25 <= dir_deg <  78.75: 
+			elif 56.25 <= wind_dir <  78.75: 
 				dir = "ENE"
-			elif 78.75 <= dir_deg <  101.25: 
+			elif 78.75 <= wind_dir <  101.25: 
 				dir = "E"
 			else: dir = ""
 		except:
 			wind_mph = "N/A"
 			dir = ""
-		period = latest_wx.findall(".//time-layout[@summarization='12hourly']/start-valid-time[@period-name]")
-		period1 = period[0].get('period-name')
-		period2 = period[1].get('period-name')
-		period3 = period[2].get('period-name')
-		fcst = latest_wx.findall(".//wordedForecast/*")
-		fcst1 = fcst[1].text
-		fcst2 = fcst[2].text
-		fcst3 = fcst[3].text
-	except urllib2.URLError:
+
+	except:
 		current_temp = "n/a"
         sky  = "n/a"
-        dir  = " "
+        #dir  = ""
         wind_mph  = " "
         period1  = "Forecast"
         period2  = " "
         period3  = " "
-        fcst1  = "n/a"
+        fcst1  = current_forecast
         fcst2  = "n/a"
         fcst3 = "n/a"
 
 
     
-	#Get game info
-    #played_games_list = Game.objects.filter(when__lte=timezone.now()).order_by('-when')
-    #latest_games_list = Game.objects.filter(when__gte=timezone.now()).order_by('when')    
+	#Get game info  
 	latest_games_list = LatestGames()
 	played_games_list = PlayedGames()
 	home_pk = Page.objects.get(header='Home').pk
@@ -91,10 +82,10 @@ def main(request):
 	photos = Photo.objects.all()
 	t = loader.get_template('main.html')
 	c = Context({
-		'current_temp': current_temp,
-		'sky': sky,
+		'current_temp': int(temp),
+		'sky': skies,
 		'dir': dir,
-		'wind_mph': wind_mph,
+		'wind_mph': wind_speed,
 		'period1': period1,
 		'period2': period2,
 		'period3': period3,
@@ -110,12 +101,5 @@ def main(request):
 
 
 def directions(request):
-	latest_games_list = Game.objects.filter(when__gte=timezone.now()).order_by('when')
-	t = loader.get_template('directions.html')
-	c = Context({
-		'latest_games_list': latest_games_list,
-	})
-	return HttpResponse(t.render(c))
+	return TemplateResponse(request, 'directions.html', {})
 
-def index(request):
-	return HttpResponse("This works")
