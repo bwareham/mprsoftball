@@ -4,7 +4,6 @@ from section.models import Page, Item
 from photo.models import Photo
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
-from django.utils import timezone
 import forecastio
 
 def main(request):
